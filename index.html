@@ -5575,7 +5575,9 @@ fsBtn.addEventListener('click', () => {
 const NAME_KEY = 'bull-arena-name';
 // the link friends get: this page's own address when it is opened directly, otherwise the published game
 // the phone app: the same game on its own website, installable from the browser
-const APP_URL = 'https://itzikc4115634-pixel.github.io/angry-bull/';
+const APP_URL = 'https://angry-bull.pages.dev/';
+// the game's first address; it now sends everyone to APP_URL with their saved game
+const OLD_HOST = /(^|\.)github\.io$/;
 // inside Claude the game runs in a frame; on its own site it is the whole page
 const IN_CLAUDE = (() => { try { return window.top !== window; } catch (e) { return true; } })();
 const GAME_URL = (() => {
@@ -6852,6 +6854,14 @@ function boot(data) {
   buildLevelLists();
   buildLangPicker();
   initBoard();
+  // the game moved house: the old address sends each player on, with their saved game
+  try {
+    if (!IN_CLAUDE && OLD_HOST.test(location.hostname)) {
+      const some = best > 0 || bestLevel > 1 || checkpoint.lv > 1 || eco.coins > 0 || eco.own.length > 5 || starTotal() > 0 || !!playerName;
+      location.replace(APP_URL + (some ? '#import=' + moveCode() : ''));
+      return;
+    }
+  } catch (e) { /* stay here if the move fails */ }
   const moved = takeImport(); // a saved game carried over in the link
   S = baseState('menu');
   applyLang(store.get(LANG_KEY) || 'he', false);

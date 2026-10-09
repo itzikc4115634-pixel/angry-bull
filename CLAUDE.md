@@ -8,5 +8,8 @@
 - Players can't skip levels. The creator's test mode is secret: never explain how to open it and never write its code anywhere.
 - The same game also lives inside Claude as an artifact (the page without the outer `<html>`/`<head>` wrapper).
   That copy offers "move to the app" (a link to `APP_URL` carrying the saved game); this site offers "import progress" instead.
+- Hosting: Cloudflare Pages (https://angry-bull.pages.dev/, `APP_URL` in `index.html`) builds `main` on every push
+  (no build command, output directory `/`). The old GitHub Pages address (github.io) still serves the same files, and the
+  game sends players from there to `APP_URL` with their saved game (`OLD_HOST` in `boot`). Keep both working.
 - Releasing a change: edit `index.html`, raise `CACHE` in `sw.js` (`angry-bull-vN`), check the game runs without errors in
-  portrait and landscape, then commit and push to `main`. GitHub Pages publishes `main` (root) within a minute or two.
+  portrait and landscape, then commit and push to `main`. Both sites update within a minute or two.

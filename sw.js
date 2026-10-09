@@ -1,7 +1,7 @@
 // השור הזועם: keeps the game on the phone so it opens fast and plays offline.
 // The game itself is fetched fresh when there is a connection (so updates arrive on the next open),
 // and the saved copy is used when there is none, or when the network is slow.
-const CACHE = 'angry-bull-v1';
+const CACHE = 'angry-bull-v2';
 const CORE = ['./', 'index.html', 'manifest.webmanifest', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/apple-touch-icon.png'];
 
 self.addEventListener('install', e => {
