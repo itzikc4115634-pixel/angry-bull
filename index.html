@@ -824,11 +824,9 @@ a.btn { display: inline-flex; align-items: center; justify-content: center; text
           <div class="seg" role="radiogroup" aria-labelledby="ctlLabelMenu">
             <label><input type="radio" name="ctlMenu" id="ctlMenuStick" value="stick" checked><span data-i18n="cStick">ג'ויסטיק</span></label>
             <label><input type="radio" name="ctlMenu" id="ctlMenuArrows" value="arrows"><span data-i18n="cArrows">חיצים</span></label>
-            <label><input type="radio" name="ctlMenu" id="ctlMenuDrag" value="drag"><span data-i18n="cDrag">גרירה</span></label>
-            <label><input type="radio" name="ctlMenu" id="ctlMenuTouch" value="touch"><span data-i18n="cTouch">נגיעה</span></label>
           </div>
         </div>
-        <p class="controls"><b data-i18n="ctrlStickB"></b><span data-i18n="ctrlStick" data-sep></span> <b data-i18n="ctrlArrowsB"></b><span data-i18n="ctrlArrows" data-sep></span> <b data-i18n="ctrlDragB"></b><span data-i18n="ctrlDrag" data-sep></span> <b data-i18n="ctrlTouchB"></b><span data-i18n="ctrlTouch" data-sep></span><span class="kb"> <b data-i18n="ctrlKeysB"></b><span data-i18n="ctrlKeys" data-sep></span></span></p>
+        <p class="controls"><b data-i18n="ctrlStickB"></b><span data-i18n="ctrlStick" data-sep></span> <b data-i18n="ctrlArrowsB"></b><span data-i18n="ctrlArrows" data-sep></span><span class="kb"> <b data-i18n="ctrlKeysB"></b><span data-i18n="ctrlKeys" data-sep></span></span></p>
         <div class="best-row">
           <p class="best-line" id="menuBest" hidden></p>
           <button class="tool share-btn" id="shareBestBtn" type="button" hidden data-i18n="share">שתף עם חברים</button>
@@ -866,8 +864,6 @@ a.btn { display: inline-flex; align-items: center; justify-content: center; text
           <div class="seg" role="radiogroup" aria-labelledby="ctlLabelPause">
             <label><input type="radio" name="ctlPause" id="ctlPauseStick" value="stick" checked><span data-i18n="cStick">ג'ויסטיק</span></label>
             <label><input type="radio" name="ctlPause" id="ctlPauseArrows" value="arrows"><span data-i18n="cArrows">חיצים</span></label>
-            <label><input type="radio" name="ctlPause" id="ctlPauseDrag" value="drag"><span data-i18n="cDrag">גרירה</span></label>
-            <label><input type="radio" name="ctlPause" id="ctlPauseTouch" value="touch"><span data-i18n="cTouch">נגיעה</span></label>
           </div>
         </div>
         <div class="btn-row">
@@ -5340,7 +5336,8 @@ const KEYMAP = { ArrowUp: 'u', KeyW: 'u', ArrowDown: 'd', KeyS: 'd', ArrowLeft: 
 // "touch" sends the bull charging to the point that was touched.
 // "stick" is a floating joystick: it appears under the thumb and the bull runs while the thumb is tilted.
 // "arrows" puts four arrow buttons and a dash button on the screen, like the keyboard on a computer.
-let controlMode = COARSE ? 'stick' : 'touch';
+// only the joystick and the arrows are offered now; the older two stay in the code for saved settings
+let controlMode = 'stick';
 const ARROW_BOOST = 1.2; // an arrow is always full tilt, a little quicker than walking pace on the keyboard
 // each finger on the arrows keeps its own presses, and the bull follows all of them together
 const pad = { fingers: new Map(), u: false, d: false, l: false, r: false, dashAt: -1e9 };
@@ -5504,11 +5501,9 @@ cv.addEventListener('pointerup', endPointer);
 cv.addEventListener('pointercancel', endPointer);
 
 function setControlMode(m, save) {
-  controlMode = m === 'touch' || m === 'drag' || m === 'arrows' ? m : 'stick';
+  controlMode = m === 'arrows' ? 'arrows' : 'stick'; // a saved "drag" or "touch" becomes the joystick
   $('ctlMenuStick').checked = $('ctlPauseStick').checked = controlMode === 'stick';
   $('ctlMenuArrows').checked = $('ctlPauseArrows').checked = controlMode === 'arrows';
-  $('ctlMenuDrag').checked = $('ctlPauseDrag').checked = controlMode === 'drag';
-  $('ctlMenuTouch').checked = $('ctlPauseTouch').checked = controlMode === 'touch';
   if (save) { store.set(CTL_KEY, controlMode); cloudSave(); }
   resetDrag();
   resize(); // the ring makes room for the thumb controls, or takes it back
@@ -5702,7 +5697,7 @@ function mergeCloud(c) {
   if (store.get(SOUND_KEY) === null && (c.sound === 'off' || c.sound === 'on') && (c.sound === 'on') !== sfx.on) {
     sfx.set(c.sound === 'on'); store.set(SOUND_KEY, c.sound); updateSoundBtn();
   }
-  if (store.get(CTL_KEY) === null && ['stick', 'arrows', 'drag', 'touch'].includes(c.ctl) && c.ctl !== controlMode) {
+  if (store.get(CTL_KEY) === null && ['stick', 'arrows'].includes(c.ctl) && c.ctl !== controlMode) {
     store.set(CTL_KEY, c.ctl); setControlMode(c.ctl, false);
   }
   if (store.get(LANG_KEY) === null && typeof c.lang === 'string' && I18N[c.lang] && c.lang !== lang) {
@@ -6865,7 +6860,7 @@ function boot(data) {
   const moved = takeImport(); // a saved game carried over in the link
   S = baseState('menu');
   applyLang(store.get(LANG_KEY) || 'he', false);
-  setControlMode(store.get(CTL_KEY) || (COARSE ? 'stick' : 'touch'), false);
+  setControlMode(store.get(CTL_KEY) || 'stick', false);
   for (let i = 0; i < 300; i++) attract(1 / 60);
   refreshMenu();
   updateTools();
