@@ -4,9 +4,9 @@
 - The whole game is `index.html`: one canvas game with its styles and script inline.
 - Translations: the `const I18N = {...};` object inside `index.html` holds 30 languages (Hebrew level names come from `LEVELS`).
   Every new UI string needs all 30 languages, with the same `{placeholders}`.
-- The opening: the owner's bullring picture filling the screen with a slow glide from the matadors to the bull (about 6
-  seconds), then the logo screen with the line (about 3 seconds); a tap moves on. Then full-screen screens (menu, name,
-  how to play) over the same art. In the menu, "levels" is the big gold button under "play". The pictures are WebP data URIs in `:root`: `--art` (the picture),
+- The opening: the owner's bullring picture filling the whole screen, still (about 6 seconds): the tall version on an
+  upright phone, the wide one otherwise. Then the logo screen with the line (about 3 seconds); a tap moves on. Then full-screen screens (menu, name,
+  how to play) over the same art. In the menu, "levels" is the big gold button under "play". The pictures are WebP data URIs in `:root`: `--art` (the wide picture), `--art-tall` (the tall one),
   `--art-soft` (a blurred copy for backgrounds) and `--logo` (the Angry Bull logo, a picture so it looks the same everywhere).
 - Saved data lives in localStorage under keys that start with `bull-arena-`. Never rename them: players would lose their progress.
 - Players can't skip levels. The creator's test mode is secret: never explain how to open it and never write its code anywhere.
